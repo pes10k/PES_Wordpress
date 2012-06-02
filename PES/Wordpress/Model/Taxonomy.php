@@ -19,6 +19,19 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
   private $sth_taxonomy_term_with_id = FALSE;
 
   /**
+   * A prepared statement for saving a new taxonomy term into the database.
+   * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   */
+  private $sth_term_save = FALSE;
+
+  /**
+   * A prepared statement that handles creating the needed relations for a
+   * newly inserted / created taxonomy term
+   * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   */
+  private $sth_term_taxonomy_save = FALSE;
+
+  /**
    * Returns an object representing a taxonomy term from the database with
    * the given name, if one exists.
    *
@@ -107,6 +120,78 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
   }
 
   /**
+   * Saves a new taxonomy term to the database.  The values array should be an array
+   * with the following keys provided:
+   *   - name (string):      The name of the term
+   *   - slug (string):      A url equivilent of the above
+   *   - taxonomy (string):  The type of term being saved, such as "post_tag" or
+   *                         category
+   *   - parent_term (int):  An optional id of a taxonomy term that is the
+   *                         parent of the one being saved, in a tree-style
+   *                         taxonomy
+   *
+   * @param array $values
+   *   An arary of key-values matching the above description
+   *
+   * @return PES_Wordpress_Result_Taxonomy|FALSE
+   *   Returns the newly created taxonomy object on success.  Otherwise FALSE
+   */
+  public function save($values) {
+
+    if ( ! $this->sth_term_save) {
+
+      $connector = $this->connector();
+      $db = $connector->db();
+
+      $save_term_query = '
+        INSERT INTO
+          ' . $connector->prefixedTable('terms') . '
+          (name,
+          slug)
+        VALUES
+          (:name,
+          :slug)
+      ';
+
+      $this->sth_term_save = $db->prepare($save_term_query);
+
+      $save_relation_query = '
+        INSERT INTO
+          ' . $connector->prefixedTable('term_taxonomy') . '
+          (term_id,
+          taxonomy,
+          parent)
+        VALUES
+          (:term_id,
+          :taxonomy,
+          :parent)
+      ';
+
+      $this->sth_term_taxonomy_save = $db->prepare($save_relation_query);
+    }
+
+    $this->sth_term_save->bindParam(':name', $values['name']);
+    $this->sth_term_save->bindParam(':slug', $values['slug']);
+
+    if ( ! $this->sth_taxonomy_term_with_id->execute()) {
+
+      return FALSE;
+    }
+    else {
+
+      $db = $this->connector()->db();
+      $term_id = $db->lastInsertId();
+
+      $this->sth_term_taxonomy_save->bindParam(':term_id', $term_id);
+      $this->sth_term_taxonomy_save->bindParam(':taxonomy', $values['taxonomy']);
+      $this->sth_term_taxonomy_save->bindParam(':parent', empty($values['parent']) ? 0 : $values['parent']);
+      $this->sth_term_taxonomy_save->execute();
+
+      return $this->termWithId($db->lastInsertId(), $values['taxonomy']);
+    }
+  }
+
+  /**
    * Wordpress keeps a seperate count of the number of posts that have been
    * assigned to a given taxonomy term.  Calling this method updates these
    * counts incase something has fallen out of sync.
@@ -123,9 +208,9 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
           SELECT
             COUNT(*)
           FROM
-            ' . $connector->prefixedTable('term_relationships') . '
+            ' . $connector->prefixedTable('term_relationships') . ' AS tr
           WHERE
-            ' . $connector->prefixedTable('term_relationships') . '.`term_taxonomy_id` = tt.`term_taxonomy_id`
+            tr.`term_taxonomy_id` = tt.`term_taxonomy_id`
         )
       ');
   }

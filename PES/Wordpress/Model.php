@@ -20,6 +20,19 @@ abstract class PES_Wordpress_Model {
   }
 
   /**
+   * Saves a new record to the database.  Inheriting models implement this to
+   * handle managing and validating fields for the table(s) they manage.
+   *
+   * @param array $values
+   *   Key-pair values for each column the model supports saving to
+   *
+   * @return mixed
+   *   Returns the model's corresponding result object if a new record was
+   *   created.  Otherwise, returns FALSE.
+   */
+  abstract public function save($values);
+
+  /**
    * Returns a reference to the shared database connector object
    *
    * @return PES_Wordpress_Connector
