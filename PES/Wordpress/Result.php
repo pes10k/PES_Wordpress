@@ -52,6 +52,6 @@ abstract class PES_Wordpress_Result {
    *   FALSE
    */
   protected function property($name) {
-    return isset($this->row->$name) ? $this->row->$name : FALSE;
+    return isset($this->row->$name) ? trim($this->row->$name) : FALSE;
   }
 }
