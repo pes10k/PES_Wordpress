@@ -44,6 +44,18 @@ class PES_Wordpress {
    */
   private $timezone = FALSE;
 
+  /**
+   * Rebuilds several cached values in the wordpress system, such as the
+   * counts for the number of comments per post and posts per term.
+   * If any changes have been made to the wordpress database through
+   * this libraries models, this should be called to make sure that
+   * the system stays in sync.
+   */
+  public function cleanup() {
+    $this->postModel()->updateCommentCounts();
+    $this->taxonomyModel()->updateTaxonomyCounts();
+  }
+
   // ===================
   // ! Getter / Setters
   // ===================

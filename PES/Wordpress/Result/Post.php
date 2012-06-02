@@ -3,6 +3,24 @@
 class PES_Wordpress_Result_Post extends PES_Wordpress_Result {
 
   /**
+   * Stores a relationship between the current post and the given taxonomy
+   * term.
+   *
+   * @param PES_Wordpress_Result_Taxonomy $term
+   *   An object representing a taxonomy term in the current wordpress install
+   *
+   * @return bool
+   *   TRUE if an association was form.  FALSE on any error
+   */
+  public function tagWithTerm(PES_Wordpress_Result_Taxonomy $term) {
+    $this->wp()->taxonomyModel()->associatePostWithTerm($this->id(), $term->id());
+  }
+
+  // ==========
+  // ! Getters
+  // ==========
+
+  /**
    * Returns the unique identifier of the post
    *
    * @return int

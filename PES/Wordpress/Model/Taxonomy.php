@@ -32,6 +32,12 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
   private $sth_term_taxonomy_save = FALSE;
 
   /**
+   * A prepared statement that handles associating a taxonomy term with post
+   * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   */
+  private $sth_associate_term_with_post = FALSE;
+
+  /**
    * Returns an object representing a taxonomy term from the database with
    * the given name, if one exists.
    *
@@ -189,6 +195,42 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
       return $this->termWithId($db->lastInsertId(), $values['taxonomy']);
     }
+  }
+
+  /**
+   * Associated a wordpress post with a term
+   *
+   * @param int $post_id
+   *   The unique identifier of a wordpress post in the current install
+   * @param int $term_id
+   *   The unique identifier of a wordpress term in the current install
+   *
+   * @return bool
+   *   TRUE if an association was form.  FALSE on any error
+   */
+  public function associatePostWithTerm($post_id, $term_id) {
+
+    if ( ! $this->sth_associate_term_with_post) {
+
+      $connector = $this->connector();
+      $db = $connector->db();
+
+      $associate_post_query = '
+        INSERT INTO
+          ' . $connector->prefixedTable('term_relationships') . '
+          (object_id,
+          term_taxonomy_id)
+        VALUES
+          (:post_id,
+          :term_id)
+      ';
+
+      $this->sth_associate_term_with_post = $db->prepare($associate_post_query);
+    }
+
+    $this->sth_associate_term_with_post->bindParam(':post_id', $post_id);
+    $this->sth_associate_term_with_post->bindParam(':term_id', $term_id);
+    return $this->sth_associate_term_with_post->execute();
   }
 
   /**

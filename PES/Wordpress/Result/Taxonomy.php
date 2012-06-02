@@ -12,7 +12,7 @@ class PES_Wordpress_Result_Taxonomy extends PES_Wordpress_Result {
    * @return int|bool
    *   The unique identifier for a taxonomy term, or FALSE if not available
    */
-  public function termId() {
+  public function id() {
     return $this->property('term_id');
   }
 
