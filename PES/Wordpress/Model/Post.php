@@ -28,7 +28,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
 
     if ( ! $this->sth_post_with_id) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -48,7 +48,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
 
     $row = $this->sth_post_with_id->fetchObject();
 
-    return $row ? new PES_Wordpress_Result_Post($this, $row) : FALSE;
+    return $row ? new PES_Wordpress_Result_Post($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -71,7 +71,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
 
     if ( ! $this->sth_post_with_title_status_and_type) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -98,7 +98,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
 
     while ($row = $this->sth_post_with_title_status_and_type->fetchObject()) {
 
-      $posts[] = new PES_Wordpress_Result_Post($this, $row);
+      $posts[] = new PES_Wordpress_Result_Post($this->wp(), $row);
     }
 
     return $posts;

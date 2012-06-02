@@ -35,7 +35,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     if ( ! $this->sth_taxonomy_term_with_name) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -59,7 +59,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     $row = $this->sth_taxonomy_term_with_name->fetchObject();
 
-    return $row ? new PES_Wordpress_Result_Taxonomy($connector, $row) : FALSE;
+    return $row ? new PES_Wordpress_Result_Taxonomy($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -79,7 +79,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     if ( ! $this->sth_taxonomy_term_with_id) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -103,7 +103,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     $row = $this->sth_taxonomy_term_with_id->fetchObject();
 
-    return $row ? new PES_Wordpress_Result_Taxonomy($this, $row) : FALSE;
+    return $row ? new PES_Wordpress_Result_Taxonomy($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -113,7 +113,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
    */
   public function updateTaxonomyCounts() {
 
-    $connector = $this->connector;
+    $connector = $this->connector();
 
     $connector->db()->exec('
       UPDATE

@@ -1,14 +1,20 @@
 <?php
 
-class PES_Wordpress_Result {
+abstract class PES_Wordpress_Result {
 
   /**
-   * A reference to a PES_Wordpress_Connector object that handles connections
-   * to the database
+   * A reference to the shared PES_Wordpress object
    *
-   * @var PES_Wordpress_Connector
+   * @var PES_Wordpress
    */
-  private $connector;
+  private $wp;
+
+  /**
+   * Stores an object representing a row from the wordpress database
+   *
+   * @var stdClass
+   */
+  private $row;
 
   /**
    * Stores a reference to a wordpress database connector on instantiation
@@ -19,17 +25,20 @@ class PES_Wordpress_Result {
    * @param stdClass $row
    *   An object representing a database row
    */
-  public function __construct(PES_Wordpress_Connector $connector, $row = FALSE) {
-    $this->connector = $connector;
+  public function __construct(PES_Wordpress $wp, $row = FALSE) {
+    $this->wp = $wp;
     $this->row = $row ?: new stdClass();
   }
 
   /**
-   * Stores an object representing a row from the wordpress database
+   * Returns a reference to the shared root WP object, to handle
+   * communicating between results and models.
    *
-   * @var stdClass
+   * @return PES_Wordpres
    */
-  private $row;
+  protected function wp() {
+    return $this->wp;
+  }
 
   /**
    * Returns the given property on the current result object if it exists,
@@ -43,7 +52,6 @@ class PES_Wordpress_Result {
    *   FALSE
    */
   protected function property($name) {
-
     return isset($this->row->$name) ? $this->row->$name : FALSE;
   }
 }

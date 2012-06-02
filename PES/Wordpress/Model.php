@@ -1,22 +1,40 @@
 <?php
 
-abstract PES_Wordpress_Model {
+abstract class PES_Wordpress_Model {
 
   /**
-   * A reference to a PES_Wordpress_Connector object that handles connections
-   * to the database
+   * A refernece to the central wordpress object that manages all models
    *
-   * @var PES_Wordpress_Connector
+   * @var PES_Wordpress
    */
-  private $connector;
+  private $wp;
 
   /**
    * Stores a reference to a wordpress database connector on instantiation
    *
-   * @param PES_Wordpress_Connector $connector
-   *   A reference to an wordpress database connector
+   * @param PES_Wordpress $wp
+   *   A reference to the global wordpress database connector
    */
-  public function __construct(PES_Wordpress_Connector $connector) {
-    $this->connector = $connector;
+  public function __construct(PES_Wordpress $wp) {
+    $this->wp = $wp;
+  }
+
+  /**
+   * Returns a reference to the shared database connector object
+   *
+   * @return PES_Wordpress_Connector
+   */
+  protected function connector() {
+    return $this->wp->connector();
+  }
+
+  /**
+   * Returns a reference to the shared core wordpress object, so that models
+   * can load up other models.
+   *
+   * @return PES_Wordpress
+   */
+  protected function wordpress() {
+    return $this->wp;
   }
 }

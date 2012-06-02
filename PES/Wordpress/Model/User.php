@@ -34,7 +34,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
 
     if ( ! $this->sth_user_with_id) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -54,7 +54,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
     $this->sth_user_with_id->execute();
 
     $row = $this->sth_user_with_id->fetchObject();
-    return $row ? new PES_Wordpress_Result_User($connector, $row) : FALSE;
+    return $row ? new PES_Wordpress_Result_User($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -71,7 +71,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
 
     if ( ! $this->sth_user_with_login) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -91,7 +91,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
     $this->sth_user_with_login->execute();
 
     $row = $this->sth_user_with_login->fetchObject();
-    return $row ? new PES_Wordpress_Result_User($connector, $row) : FALSE;
+    return $row ? new PES_Wordpress_Result_User($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -108,7 +108,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
 
     if ( ! $this->sth_user_with_display_name) {
 
-      $connector = $this->connector;
+      $connector = $this->connector();
 
       $prepared_query = '
         SELECT
@@ -128,6 +128,6 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
     $this->sth_user_with_display_name->execute();
 
     $row = $this->sth_user_with_display_name->fetchObject();
-    return $row ? new PES_Wordpress_Result_User($connector, $row) : FALSE;
+    return $row ? new PES_Wordpress_Result_User($this->wp(), $row) : FALSE;
   }
 }
