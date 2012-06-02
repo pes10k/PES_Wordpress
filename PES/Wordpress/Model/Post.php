@@ -123,7 +123,6 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    *   - status (string):    The post's status, such as "publish" or "draft"
    *   - comment_status (bool):
    *                         Whether the post can still be commented on.
-   *                         Defaults to "open"
    *   - modified_date (DateTime):
    *                         The date that the post was last modified on
    *   - parent (int):       Optional unique identifier for a post that is the
@@ -191,7 +190,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
     $this->sth_save_post->bindParam(':title', $values['title']);
     $this->sth_save_post->bindParam(':excerpt', $values['excerpt']);
     $this->sth_save_post->bindParam(':status', $values['status']);
-    $this->sth_save_post->bindParam(':comment_status', empty($values['comment_status']) ? 'open' : $values['comment_status']);
+    $this->sth_save_post->bindParam(':comment_status', empty($values['comment_status']) ? 'closed' : 'open');
     $this->sth_save_post->bindParam(':slug', $values['slug']);
     $this->sth_save_post->bindParam(':modified', $values['modified']->format('Y-m-d H:i:s'));
     $this->sth_save_post->bindParam(':modified_gmt', gmdate('Y-m-d H:i:s', $values['modified']->format('U')));

@@ -132,9 +132,9 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
 
       $prepared_query = '
         SELECT
-          ' . $connector->prefixedTable('comments') . '.*
+          c.*
         FROM
-          ' . $connector->prefixedTable('comments') . '
+          ' . $connector->prefixedTable('comments') . ' AS c
         WHERE
           comment_post_ID = :post_id AND
           comment_author = :author AND
@@ -218,7 +218,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
     $this->sth_comment_save->bindParam(':date', $values['date']->format('Y-m-d H:i:s'));
     $this->sth_comment_save->bindParam(':date_gmt', gmdate('Y-m-d H:i:s', $values['date']->format('U')));
     $this->sth_comment_save->bindParam(':content', $values['content']);
-    $this->sth_comment_save->bindParam(':approved', $values['approved']);
+    $this->sth_comment_save->bindParam(':approved', $values['approved'] ? '1' : '0');
     
     if ( ! $this->sth_comment_save->execute()) {
 

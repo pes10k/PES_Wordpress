@@ -35,6 +35,15 @@ class PES_Wordpress {
   private $taxonomy_model = FALSE;
 
   /**
+   * Reference to the lazily loaded comment model, used for fetching
+   * and saving information about comments about posts
+   * in the current wordpress install
+   *
+   * @var PES_Wordpress_Model_Comment|FALSE
+   */
+  private $comment_model = FALSE;
+
+  /**
    * The timezone of the wordpress install.  If this isn't provided, the
    * timezone of the current server will be used.  This is lazy loaded
    * to, so we don't assume the default unless someone has tried to get
@@ -128,6 +137,24 @@ class PES_Wordpress {
     }
 
     return $this->taxonomy_model;
+  }
+
+  /**
+   * Returns a shared reference to a model object used for fetching
+   * and saving information about comments on posts in the current
+   * wordpress install
+   *
+   * @return PES_Wordpress_Model_Comment
+   *   A shared reference to the comment model
+   */
+  public function commentModel() {
+
+    if ( ! $this->comment_model) {
+
+      $this->comment_model = new PES_Wordpress_Model_Comment($this);
+    }
+
+    return $this->comment_model;
   }
 
   /**
