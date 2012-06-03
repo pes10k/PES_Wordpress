@@ -63,7 +63,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    * @param string $title
    *   The possible title of a wordpress post
    * @param string $status
-   *   The type of wordpress post status to search by, such as 'published'
+   *   The type of wordpress post status to search by, such as 'publish'
    *   or 'draft'
    * @param string $type
    *   The type of post to search by, such as 'post' or a custom post type
@@ -72,7 +72,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    *   Returns an array of zero or more PES_Wordpress_Result_Post objects,
    *   ordered by least to most recent.
    */
-  public function postsWithTitleStatusAndType($title, $status = 'published', $type = 'post') {
+  public function postsWithTitleStatusAndType($title, $status = 'publish', $type = 'post') {
 
     if ( ! $this->sth_post_with_title_status_and_type) {
 
@@ -104,7 +104,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
     while ($row = $this->sth_post_with_title_status_and_type->fetchObject()) {
 
       $posts[] = new PES_Wordpress_Result_Post($this->wp(), $row);
-    }
+    } 
 
     return $posts;
   }

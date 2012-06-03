@@ -59,9 +59,10 @@ class PES_Wordpress_Connector {
     if ( ! $this->db) {
 
       $this->db = new PDO(
-        'mysql:dbname=' . $this->db_name . ';host=' . $this->db_host,
+        'mysql:dbname=' . $this->db_name . ';host=' . $this->db_host . ';charset=UTF-8',
         $this->db_user,
-        $this->db_password
+        $this->db_password,
+        array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
       );
     }
 
