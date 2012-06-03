@@ -138,7 +138,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
         WHERE
           comment_post_ID = :post_id AND
           comment_author = :author AND
-          date = :date
+          comment_date = :date
         ORDER BY
           comment_date';
 
@@ -219,11 +219,13 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
     $this->sth_comment_save->bindParam(':ip', $values['ip']);
     $this->sth_comment_save->bindParam(':date', $values['date']->format('Y-m-d H:i:s'));
     $this->sth_comment_save->bindParam(':date_gmt', gmdate('Y-m-d H:i:s', $values['date']->format('U')));
-    $this->sth_comment_save->bindParam(':content', $values['content']);
+    $this->sth_comment_save->bindParam(':content', $values['comment']);
     $this->sth_comment_save->bindParam(':approved', $is_approved);
     
     if ( ! $this->sth_comment_save->execute()) {
 
+      var_dump($this->sth_comment_save->errorInfo());
+      exit;
       return FALSE;
     }
     else {
