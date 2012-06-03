@@ -30,7 +30,7 @@ abstract class PES_Wordpress_Model {
    *   Returns the model's corresponding result object if a new record was
    *   created.  Otherwise, returns FALSE.
    */
-  abstract public function save($values);
+//  abstract public function save($values);
 
   /**
    * Returns a reference to the shared database connector object
@@ -47,7 +47,7 @@ abstract class PES_Wordpress_Model {
    *
    * @return PES_Wordpress
    */
-  protected function wordpress() {
+  protected function wp() {
     return $this->wp;
   }
 }

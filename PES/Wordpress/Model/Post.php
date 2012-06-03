@@ -53,7 +53,6 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
     $this->sth_post_with_id->execute();
 
     $row = $this->sth_post_with_id->fetchObject();
-
     return $row ? new PES_Wordpress_Result_Post($this->wp(), $row) : FALSE;
   }
 
@@ -123,7 +122,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    *   - status (string):    The post's status, such as "publish" or "draft"
    *   - comment_status (bool):
    *                         Whether the post can still be commented on.
-   *   - modified_date (DateTime):
+   *   - modified (DateTime):
    *                         The date that the post was last modified on
    *   - parent (int):       Optional unique identifier for a post that is the
    *                         parent of this post, such as if the current post
@@ -183,20 +182,24 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
       $this->sth_save_post = $db->prepare($save_post_query);
     }
 
+    $comment_status = empty($values['comment_status']) ? 'closed' : 'open';
+    $parent_id = empty($values['parent']) ? 0 : $values['parent'];
+    $post_type = empty($values['type']) ? 'post' : $values['type'];
+
     $this->sth_save_post->bindParam(':user_id', $values['user_id']);
     $this->sth_save_post->bindParam(':date', $values['date']->format('Y-m-d H:i:s'));
     $this->sth_save_post->bindParam(':date_gmt', gmdate('Y-m-d H:i:s', $values['date']->format('U')));
-    $this->sth_save_post->bindParam(':content', $values['content']);
+    $this->sth_save_post->bindParam(':content', $values['body']);
     $this->sth_save_post->bindParam(':title', $values['title']);
     $this->sth_save_post->bindParam(':excerpt', $values['excerpt']);
     $this->sth_save_post->bindParam(':status', $values['status']);
-    $this->sth_save_post->bindParam(':comment_status', empty($values['comment_status']) ? 'closed' : 'open');
+    $this->sth_save_post->bindParam(':comment_status', $comment_status);
     $this->sth_save_post->bindParam(':slug', $values['slug']);
     $this->sth_save_post->bindParam(':modified', $values['modified']->format('Y-m-d H:i:s'));
     $this->sth_save_post->bindParam(':modified_gmt', gmdate('Y-m-d H:i:s', $values['modified']->format('U')));
-    $this->sth_save_post->bindParam(':parent', empty($values['parent']) ? 0 : $values['parent']);
+    $this->sth_save_post->bindParam(':parent', $parent_id);
     $this->sth_save_post->bindParam(':guid', $values['guid']);
-    $this->sth_save_post->bindParam(':type', empty($values['type']) ? 'post' : $values['type']);
+    $this->sth_save_post->bindParam(':type', $post_type);
 
     if ( ! $this->sth_save_post->execute()) {
 

@@ -179,18 +179,21 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
     $this->sth_term_save->bindParam(':name', $values['name']);
     $this->sth_term_save->bindParam(':slug', $values['slug']);
 
-    if ( ! $this->sth_taxonomy_term_with_id->execute()) {
+    if ( ! $this->sth_term_save->execute()) {
 
+      var_dump($values);
+      var_dump($this->sth_term_save->errorInfo());
       return FALSE;
     }
     else {
 
       $db = $this->connector()->db();
       $term_id = $db->lastInsertId();
+      $parent_term_id = empty($values['parent']) ? 0 : $values['parent'];
 
       $this->sth_term_taxonomy_save->bindParam(':term_id', $term_id);
       $this->sth_term_taxonomy_save->bindParam(':taxonomy', $values['taxonomy']);
-      $this->sth_term_taxonomy_save->bindParam(':parent', empty($values['parent']) ? 0 : $values['parent']);
+      $this->sth_term_taxonomy_save->bindParam(':parent', $parent_term_id);
       $this->sth_term_taxonomy_save->execute();
 
       return $this->termWithId($db->lastInsertId(), $values['taxonomy']);

@@ -210,6 +210,8 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
       $this->sth_comment_save = $connector->db()->prepare($prepared_query);
     }
 
+    $is_approved = $values['approved'] ? '1' : '0';
+
     $this->sth_comment_save->bindParam(':post_id', $values['post_id']);
     $this->sth_comment_save->bindParam(':author', $values['author']);
     $this->sth_comment_save->bindParam(':email', $values['email']);
@@ -218,7 +220,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
     $this->sth_comment_save->bindParam(':date', $values['date']->format('Y-m-d H:i:s'));
     $this->sth_comment_save->bindParam(':date_gmt', gmdate('Y-m-d H:i:s', $values['date']->format('U')));
     $this->sth_comment_save->bindParam(':content', $values['content']);
-    $this->sth_comment_save->bindParam(':approved', $values['approved'] ? '1' : '0');
+    $this->sth_comment_save->bindParam(':approved', $is_approved);
     
     if ( ! $this->sth_comment_save->execute()) {
 
