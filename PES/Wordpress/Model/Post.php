@@ -230,7 +230,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
           FROM
             ' . $connector->prefixedTable('comments') . ' AS c
           WHERE
-            c.`comment_post_ID` = p.ID`
+            c.`comment_post_ID` = p.`ID`
         )
       ');
   }
