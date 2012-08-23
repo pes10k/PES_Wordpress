@@ -1,12 +1,15 @@
 <?php
 
-class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
+namespace PES\Wordpress\Model;
+use \PES\Wordpress\Result as Result;
+
+class Taxonomy extends \PES\Wordpress\Model {
 
   /**
    * A PDO statement for querying for taxonomy terms by name and taxonomy
    * type.  This is lazy loaded, so will be FALSE when not yet requested.
    *
-   * @var PDOStatement|bool
+   * @var \PDOStatement|bool
    */
   private $sth_taxonomy_term_with_name = FALSE;
 
@@ -14,7 +17,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
    * A PDO statement for querying for taxonomy terms by id and taxonomy
    * type.  This is lazy loaded, so will be FALSE when not yet requested.
    *
-   * @var PDOStatement|bool
+   * @var \PDOStatement|bool
    */
   private $sth_taxonomy_term_with_id = FALSE;
 
@@ -46,7 +49,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
    * @param string $type
    *   The type of taxonomy to search in
    *
-   * @return PES_Wordpress_Result_Taxonomy|bool
+   * @return \PES\Wordpress\Result\Taxonomy|bool
    *   An object representing a taxonomy term in the database, if one exists,
    *   otherwise FALSE
    */
@@ -78,7 +81,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     $row = $this->sth_taxonomy_term_with_name->fetchObject();
 
-    return $row ? new PES_Wordpress_Result_Taxonomy($this->wp(), $row) : FALSE;
+    return $row ? new Result\Taxonomy($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -90,7 +93,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
    * @param string $type
    *   The type of taxonomy to search in
    *
-   * @return PES_Wordpress_Result_Taxonomy|bool
+   * @return \PES\Wordpress\Result\Taxonomy|bool
    *   An object representing a taxonomy term in the database, if one exists,
    *   otherwise FALSE
    */
@@ -102,14 +105,14 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
       $prepared_query = '
         SELECT
-          ' . $connector->prefixedTable('terms') . '.*
+          t.*
         FROM
-          ' . $connector->prefixedTable('terms') . '
+          ' . $connector->prefixedTable('terms') . ' AS t
         JOIN
-          ' . $connector->prefixedTable('term_taxonomy') . ' USING (`term_id`)
+          ' . $connector->prefixedTable('term_taxonomy') . ' AS tt USING (`term_id`)
         WHERE
-          ' . $connector->prefixedTable('terms') . '.`term_id` = :term_id AND
-          ' . $connector->prefixedTable('term_taxonomy') . '.`taxonomy` = :taxonomy_type
+          t.`term_id` = :term_id AND
+          tt.`taxonomy` = :taxonomy_type
         LIMIT
           1';
 
@@ -122,7 +125,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     $row = $this->sth_taxonomy_term_with_id->fetchObject();
 
-    return $row ? new PES_Wordpress_Result_Taxonomy($this->wp(), $row) : FALSE;
+    return $row ? new Result\Taxonomy($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -139,7 +142,7 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
    * @param array $values
    *   An arary of key-values matching the above description
    *
-   * @return PES_Wordpress_Result_Taxonomy|FALSE
+   * @return \PES\Wordpress\Result\Taxonomy|FALSE
    *   Returns the newly created taxonomy object on success.  Otherwise FALSE
    */
   public function save($values) {
@@ -181,7 +184,6 @@ class PES_Wordpress_Model_Taxonomy extends PES_Wordpress_Model {
 
     if ( ! $this->sth_term_save->execute()) {
 
-      var_dump($values);
       var_dump($this->sth_term_save->errorInfo());
       return FALSE;
     }

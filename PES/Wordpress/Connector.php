@@ -1,6 +1,8 @@
 <?php
 
-class PES_Wordpress_Connector {
+namespace PES\Wordpress;
+
+class Connector {
 
   /**
    * The prefix that should be used when connecting to wordpress tables.
@@ -42,7 +44,7 @@ class PES_Wordpress_Connector {
    * The established connection to the database, or FALSE if no connection
    * has been established.  This is lazyloaded for convenience
    *
-   * @var PDO|bool
+   * @var \PDO|bool
    */
   private $db = FALSE;
 
@@ -51,18 +53,18 @@ class PES_Wordpress_Connector {
    * been established.  If one hasn't been established, attempts to create
    * a connection and returns that result.
    *
-   * @return PDO
+   * @return \PDO
    *   A reference to an PDO connection to the wordpress database
    */
   public function db() {
 
     if ( ! $this->db) {
 
-      $this->db = new PDO(
+      $this->db = new \PDO(
         'mysql:dbname=' . $this->db_name . ';host=' . $this->db_host . ';charset=UTF-8',
         $this->db_user,
         $this->db_password,
-        array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+        array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
       );
     }
 
@@ -93,7 +95,7 @@ class PES_Wordpress_Connector {
    * @param string $a_prefix
    *   The prefix, such as 'wp_' that exists before table names
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    *   A reference to the current object, to allow for method chaining.
    */
   public function setPrefix($a_prefix) {
@@ -107,7 +109,7 @@ class PES_Wordpress_Connector {
    * @param string $a_user_name
    *   The name of a database user
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    *   A reference to the current object, to allow for method chaining.
    */
   public function setDbUsername($a_user_name) {
@@ -122,7 +124,7 @@ class PES_Wordpress_Connector {
    * @param string $a_host_name
    *   The hostname for the wordpress database
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    *   A reference to the current object, to allow for method chaining.
    */
   public function setDbHost($a_host_name) {
@@ -136,7 +138,7 @@ class PES_Wordpress_Connector {
    * @param string $a_password
    *   The database password
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    *   A reference to the current object, to allow for method chaining.
    */
   public function setDbPassword($a_password) {
@@ -150,7 +152,7 @@ class PES_Wordpress_Connector {
    * @param string $a_name
    *   The name of a database
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    *   A reference to the current object, to allow for method chaining.
    */
   public function setDbName($a_name) {

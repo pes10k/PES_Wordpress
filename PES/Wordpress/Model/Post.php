@@ -1,6 +1,9 @@
 <?php
 
-class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
+namespace PES\Wordpress\Model;
+use \PES\Wordpress\Result as Result;
+
+class Post extends \PES\Wordpress\Model {
 
   /**
    * A prepared statement for fetching a post by its post id.
@@ -26,7 +29,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    * @param int $post_id
    *   The unique id of a post in the database
    *
-   * @return PES_Wordpress_Result_Post|FALSE
+   * @return \PES\Wordpress\Result\Post|FALSE
    *   Returns an object representing the post, if one exists.  Otherwise,
    *   returns FALSE
    */
@@ -53,7 +56,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
     $this->sth_post_with_id->execute();
 
     $row = $this->sth_post_with_id->fetchObject();
-    return $row ? new PES_Wordpress_Result_Post($this->wp(), $row) : FALSE;
+    return $row ? new Result\Post($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -69,7 +72,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    *   The type of post to search by, such as 'post' or a custom post type
    *
    * @return array
-   *   Returns an array of zero or more PES_Wordpress_Result_Post objects,
+   *   Returns an array of zero or more \PES\Wordpress\Result\Post objects,
    *   ordered by least to most recent.
    */
   public function postsWithTitleStatusAndType($title, $status = 'publish', $type = 'post') {
@@ -103,8 +106,8 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
 
     while ($row = $this->sth_post_with_title_status_and_type->fetchObject()) {
 
-      $posts[] = new PES_Wordpress_Result_Post($this->wp(), $row);
-    } 
+      $posts[] = new Result\Post($this->wp(), $row);
+    }
 
     return $posts;
   }
@@ -135,7 +138,7 @@ class PES_Wordpress_Model_Post extends PES_Wordpress_Model {
    * @param array $values
    *   An arary of key-values matching the above description
    *
-   * @return PES_Wordpress_Result_Post|FALSE
+   * @return \PES\Wordpress\Result\Post|FALSE
    *   Returns the newly created post object on success.  Otherwise FALSE
    */
   public function save($values) {

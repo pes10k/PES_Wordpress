@@ -1,6 +1,9 @@
 <?php
 
-class PES_Wordpress_Model_User extends PES_Wordpress_Model {
+namespace PES\Wordpress\Model;
+use \PES\Wordpress\Result as Result;
+
+class User extends \PES\Wordpress\Model {
 
   /**
    * A prepared statement for fetching a user by its unique id.
@@ -26,7 +29,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
    * @param int $user_id
    *   The unique identifier for a wordpress user
    *
-   * @return PES_Wordpress_Result_User|FALSE
+   * @return \PES\Wordpress\Result\User|FALSE
    *   Returns an object representing a user in the wordpress install,
    *   or FALSE if no matching user could be found.
    */
@@ -54,7 +57,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
     $this->sth_user_with_id->execute();
 
     $row = $this->sth_user_with_id->fetchObject();
-    return $row ? new PES_Wordpress_Result_User($this->wp(), $row) : FALSE;
+    return $row ? new Result\User($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -63,7 +66,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
    * @param string login
    *   The unique login name for a wordpress user
    *
-   * @return PES_Wordpress_Result_User|FALSE
+   * @return \PES\Wordpress\Result\User|FALSE
    *   Returns an object representing a user in the wordpress install,
    *   or FALSE if no matching user could be found.
    */
@@ -91,7 +94,7 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
     $this->sth_user_with_login->execute();
 
     $row = $this->sth_user_with_login->fetchObject();
-    return $row ? new PES_Wordpress_Result_User($this->wp(), $row) : FALSE;
+    return $row ? new Result\User($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -128,6 +131,6 @@ class PES_Wordpress_Model_User extends PES_Wordpress_Model {
     $this->sth_user_with_display_name->execute();
 
     $row = $this->sth_user_with_display_name->fetchObject();
-    return $row ? new PES_Wordpress_Result_User($this->wp(), $row) : FALSE;
+    return $row ? new Result\User($this->wp(), $row) : FALSE;
   }
 }

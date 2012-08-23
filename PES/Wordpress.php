@@ -1,11 +1,14 @@
 <?php
 
-class PES_Wordpress {
+namespace PES;
+use \PES\Wordpress as WP;
+
+class Wordpress {
 
   /**
    * Reference to the database connector for the wordpress install
    *
-   * @var PES_Wordpress_Connector|FALSE
+   * @var \PES\Wordpress\Connector|FALSE
    */
   private $connector = FALSE;
 
@@ -13,7 +16,7 @@ class PES_Wordpress {
    * Reference to the lazily loaded post model, for fetching and saving
    * wordpress posts.
    *
-   * @var PES_Wordpress_Model_Post|FALSE
+   * @var \PES\Wordpress\Model\Post|FALSE
    */
   private $post_model = FALSE;
 
@@ -21,7 +24,7 @@ class PES_Wordpress {
    * Reference to the lazily loaded user model, for fetching and saving
    * information about wordpress users.
    *
-   * @var PES_Wordpress_Model_User|FALSE
+   * @var \PES\Wordpress\Model\User|FALSE
    */
   private $user_model = FALSE;
 
@@ -30,7 +33,7 @@ class PES_Wordpress {
    * and saving information about taxonomies, tags, categories, etc
    * in the current wordpress install
    *
-   * @var PES_Wordpress_Model_Taxonomy|FALSE
+   * @var \PES\Wordpress\Model\Taxonomy|FALSE
    */
   private $taxonomy_model = FALSE;
 
@@ -39,7 +42,7 @@ class PES_Wordpress {
    * and saving information about comments about posts
    * in the current wordpress install
    *
-   * @var PES_Wordpress_Model_Comment|FALSE
+   * @var \PES\Wordpress\Model\Comment|FALSE
    */
   private $comment_model = FALSE;
 
@@ -74,14 +77,14 @@ class PES_Wordpress {
    * then populate the returned connector object with the necessary database
    * parameters so that the models can connect to the wordpress database.
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    *   An instantiated and shared reference to the connector object
    */
   public function connector() {
 
     if ( ! $this->connector) {
 
-      $this->connector = new PES_Wordpress_Connector();
+      $this->connector = new WP\Connector();
     }
 
     return $this->connector;
@@ -91,14 +94,14 @@ class PES_Wordpress {
    * Returns a shared refernece to a model object used for fetching and
    * creating posts in the wordpress install
    *
-   * @return PES_Wordpress_Model_Post
+   * @return \PES\Wordpress\Model\Post
    *   An shared reference to the post model
    */
   public function postModel() {
 
     if ( ! $this->post_model) {
 
-      $this->post_model = new PES_Wordpress_Model_Post($this);
+      $this->post_model = new WP\Model\Post($this);
     }
 
     return $this->post_model;
@@ -108,14 +111,14 @@ class PES_Wordpress {
    * Returns a shared refernece to a model object used for fetching and
    * creating information about users in the current wordpress install
    *
-   * @return PES_Wordpress_Model_User
+   * @return \PES\Wordpress\Model\User
    *   An shared reference to the user model
    */
   public function userModel() {
 
     if ( ! $this->user_model) {
 
-      $this->user_model = new PES_Wordpress_Model_User($this);
+      $this->user_model = new WP\Model\User($this);
     }
 
     return $this->user_model;
@@ -126,14 +129,14 @@ class PES_Wordpress {
    * creating information about taxonomies cand categorizations in the
    * current wordpress install
    *
-   * @return PES_Wordpress_Model_Taxonomy
+   * @return \PES\Wordpress\Model\Taxonomy
    *   An shared reference to the taxonomy model
    */
   public function taxonomyModel() {
 
     if ( ! $this->taxonomy_model) {
 
-      $this->taxonomy_model = new PES_Wordpress_Model_Taxonomy($this);
+      $this->taxonomy_model = new WP\Model\Taxonomy($this);
     }
 
     return $this->taxonomy_model;
@@ -144,14 +147,14 @@ class PES_Wordpress {
    * and saving information about comments on posts in the current
    * wordpress install
    *
-   * @return PES_Wordpress_Model_Comment
+   * @return \PES\Wordpress\Model\Comment
    *   A shared reference to the comment model
    */
   public function commentModel() {
 
     if ( ! $this->comment_model) {
 
-      $this->comment_model = new PES_Wordpress_Model_Comment($this);
+      $this->comment_model = new WP\Model\Comment($this);
     }
 
     return $this->comment_model;
@@ -160,13 +163,13 @@ class PES_Wordpress {
   /**
    * Returns a reference to the timezone for the wordpress install data
    *
-   * @return DateTimeZone
+   * @return \DateTimeZone
    */
   public function timezone() {
 
     if ( ! $this->timezone) {
 
-      $this->timezone = new DateTimeZone(date_default_timezone_get());
+      $this->timezone = new \DateTimeZone(date_default_timezone_get());
     }
 
     return $this->timezone;
@@ -176,13 +179,13 @@ class PES_Wordpress {
    * Sets the timezone the system should use when interpreting dates in the
    * wordpress database
    *
-   * @param DateTimeZone $time
+   * @param \DateTimeZone $time
    *   The timezone to use when interpreting dates in the database
    *
-   * @reutrn PES_Wordpress
+   * @reutrn \PES\Wordpress
    *   A reference to the current object to allow for method chaining.
    */
-  public function setTimezone(DateTimeZone $timezone) {
+  public function setTimezone(\DateTimeZone $timezone) {
     $this->timezone = $timezone;
     return $this;
   }

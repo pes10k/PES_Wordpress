@@ -1,10 +1,12 @@
 <?php
 
+namespace PES\Wordpress\Result;
+
 /**
  * Instances of this class represent individual users in the current wordpress
  * install
  */
-class PES_Wordpress_Result_User extends PES_Wordpress_Result {
+class User extends \PES\Wordpress\Result {
 
   /**
    * Returns the unique identifier for the user record

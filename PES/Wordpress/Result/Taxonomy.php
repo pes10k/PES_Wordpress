@@ -1,6 +1,8 @@
 <?php
 
-class PES_Wordpress_Result_Taxonomy extends PES_Wordpress_Result {
+namespace PES\Wordpress\Result;
+
+class Taxonomy extends \PES\Wordpress\Result {
 
   // ===================
   // ! Getter / Setters

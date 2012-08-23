@@ -1,6 +1,8 @@
 <?php
 
-abstract class PES_Wordpress_Result {
+namespace PES\Wordpress;
+
+abstract class Result {
 
   /**
    * A reference to the shared PES_Wordpress object
@@ -20,21 +22,21 @@ abstract class PES_Wordpress_Result {
    * Stores a reference to a wordpress database connector on instantiation
    * and an object representing a database row
    *
-   * @param PES_Wordpress_Connector $connector
+   * @param \PES\Wordpress\Connector $connector
    *   A reference to an wordpress database connector
-   * @param stdClass $row
+   * @param \stdClass $row
    *   An object representing a database row
    */
-  public function __construct(PES_Wordpress $wp, $row = FALSE) {
+  public function __construct(\PES\Wordpress $wp, $row = FALSE) {
     $this->wp = $wp;
-    $this->row = $row ?: new stdClass();
+    $this->row = $row ?: new \stdClass();
   }
 
   /**
    * Returns a reference to the shared root WP object, to handle
    * communicating between results and models.
    *
-   * @return PES_Wordpres
+   * @return \PES\Wordpress
    */
   protected function wp() {
     return $this->wp;

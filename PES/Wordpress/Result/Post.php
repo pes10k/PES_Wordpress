@@ -1,18 +1,20 @@
 <?php
 
-class PES_Wordpress_Result_Post extends PES_Wordpress_Result {
+namespace PES\Wordpress\Result;
+
+class Post extends \PES\Wordpress\Result {
 
   /**
    * Stores a relationship between the current post and the given taxonomy
    * term.
    *
-   * @param PES_Wordpress_Result_Taxonomy $term
+   * @param \PES\Wordpress\Result\Taxonomy $term
    *   An object representing a taxonomy term in the current wordpress install
    *
    * @return bool
    *   TRUE if an association was form.  FALSE on any error
    */
-  public function tagWithTerm(PES_Wordpress_Result_Taxonomy $term) {
+  public function tagWithTerm(Taxonomy $term) {
     $this->wp()->taxonomyModel()->associatePostWithTerm($this->id(), $term->id());
   }
 
@@ -32,7 +34,7 @@ class PES_Wordpress_Result_Post extends PES_Wordpress_Result {
   /**
    * Returns the user object representing the author of this post.
    *
-   * @return PES_Wordpress_Result_User|FALSE
+   * @return \PES\Wordpress\Result\User|FALSE
    *   The user object of the posts author, or FALSE if that can't
    *   be found.
    */
@@ -44,13 +46,13 @@ class PES_Wordpress_Result_Post extends PES_Wordpress_Result {
   /**
    * Returns a date object describing when the post was created
    *
-   * @return DateTime
+   * @return \DateTime
    *   An object representing the time the post was created in the
    *   wordpress install's timezone.
    */
   public function createdDate() {
     $post_date = $this->property('post_date');
-    return $post_date ? new DateTime($post_date, $this->wp()->timezone()) : FALSE;
+    return $post_date ? new \DateTime($post_date, $this->wp()->timezone()) : FALSE;
   }
 
   /**
@@ -102,13 +104,13 @@ class PES_Wordpress_Result_Post extends PES_Wordpress_Result {
   /**
    * Returns a date object describing when the post was last modified
    *
-   * @return DateTime
+   * @return \DateTime
    *   An object representing the time the post was last modified in the
    *   wordpress install's timezone.
    */
   public function modifiedDate() {
     $modified_date = $this->property('post_modified');
-    return $modified_date ? new DateTime($modified_date, $this->wp()->timezone()) : FALSE;
+    return $modified_date ? new \DateTime($modified_date, $this->wp()->timezone()) : FALSE;
   }
 
   /**
@@ -123,7 +125,7 @@ class PES_Wordpress_Result_Post extends PES_Wordpress_Result {
   /**
    * Returns an object represeting the parent of this post, if one exists
    *
-   * @return PES_Wordpress_Result_Post|FALSE
+   * @return \PES\Wordpress\Result\Post|FALSE
    */
   public function parentPost() {
     $parent_post_id = $this->property('post_parent');

@@ -1,6 +1,8 @@
 <?php
 
-abstract class PES_Wordpress_Model {
+namespace PES\Wordpress;
+
+abstract class Model {
 
   /**
    * A refernece to the central wordpress object that manages all models
@@ -12,10 +14,10 @@ abstract class PES_Wordpress_Model {
   /**
    * Stores a reference to a wordpress database connector on instantiation
    *
-   * @param PES_Wordpress $wp
+   * @param \PES\Wordpress $wp
    *   A reference to the global wordpress database connector
    */
-  public function __construct(PES_Wordpress $wp) {
+  public function __construct(\PES\Wordpress $wp) {
     $this->wp = $wp;
   }
 
@@ -35,7 +37,7 @@ abstract class PES_Wordpress_Model {
   /**
    * Returns a reference to the shared database connector object
    *
-   * @return PES_Wordpress_Connector
+   * @return \PES\Wordpress\Connector
    */
   protected function connector() {
     return $this->wp->connector();
@@ -45,7 +47,7 @@ abstract class PES_Wordpress_Model {
    * Returns a reference to the shared core wordpress object, so that models
    * can load up other models.
    *
-   * @return PES_Wordpress
+   * @return \PES\Wordpress
    */
   protected function wp() {
     return $this->wp;

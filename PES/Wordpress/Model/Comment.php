@@ -1,6 +1,9 @@
 <?php
 
-class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
+namespace PES\Wordpress\Model;
+use \PES\Wordpress\Result as Result;
+
+class Comment extends \PES\Wordpress\Model {
 
   /**
    * A prepared statement for fetching a comment by its id.
@@ -34,7 +37,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
    * @param int $comment_id
    *   The unique id of a comment in the database
    *
-   * @return PES_Wordpress_Result_Comment|FALSE
+   * @return \PES\Wordpress\Result\Comment|FALSE
    *   Returns an object representing the comment, if one exists.  Otherwise,
    *   returns FALSE
    */
@@ -46,9 +49,9 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
 
       $prepared_query = '
         SELECT
-          ' . $connector->prefixedTable('comments') . '.*
+          c.*
         FROM
-          ' . $connector->prefixedTable('comments') . '
+          ' . $connector->prefixedTable('comments') . ' AS c
         WHERE
           comment_ID = :comment_id
         LIMIT
@@ -62,7 +65,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
 
     $row = $this->sth_comment_with_id->fetchObject();
 
-    return $row ? new PES_Wordpress_Result_Comment($this->wp(), $row) : FALSE;
+    return $row ? new Result\Comment($this->wp(), $row) : FALSE;
   }
 
   /**
@@ -83,9 +86,9 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
 
       $prepared_query = '
         SELECT
-          ' . $connector->prefixedTable('comments') . '.*
+          c.*
         FROM
-          ' . $connector->prefixedTable('comments') . '
+          ' . $connector->prefixedTable('comments') . ' AS c
         WHERE
           comment_post_ID = :post_id
         ORDER BY
@@ -101,7 +104,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
 
     while ($row = $this->sth_comments_for_post_id->fetchObject()) {
 
-      $comments[] = new PES_Wordpress_Result_Comment($this->wp(), $row);
+      $comments[] = new Result\Comment($this->wp(), $row);
     }
 
     return $comments;
@@ -117,14 +120,14 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
    *   The human readable name left for a comment
    * @param int $post_id
    *   The unique identifier for a post in the system
-   * @param DateTime $time
+   * @param \DateTime $time
    *   The time that the comment to search for was created.
    *
    * @return array
-   *   Zero or more PES_Wordpress_Result_Comment objects that match the
+   *   Zero or more \PES\Wordpress\Result\Comment objects that match the
    *   given parameters.
    */
-  public function commentByAuthorForPostAtTime($author_name, $post_id, DateTime $time) {
+  public function commentByAuthorForPostAtTime($author_name, $post_id, \DateTime $time) {
 
     if ( ! $this->sth_comment_by_author_for_post_and_date) {
 
@@ -154,7 +157,7 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
 
     while ($row = $this->sth_comment_by_author_for_post_and_date->fetchObject()) {
 
-      $comments[] = new PES_Wordpress_Result_Comment($this->wp(), $row);
+      $comments[] = new Result\Comment($this->wp(), $row);
     }
 
     return $comments;
@@ -169,13 +172,13 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
    *   - url (string):       A web url provided with the comment
    *   - ip (string):        The IP address the comment was left from
    *   - date (DateTime):    The time the comment was left
-   *   - comment (string):   The text of the comment 
+   *   - comment (string):   The text of the comment
    *   - approved (bool):    Whether the comment was approved for display
    *
    * @param array $values
    *   An arary of key-values matching the above description
    *
-   * @return PES_Wordpress_Result_Comment|FALSE
+   * @return \PES\Wordpress\Result\Comment|FALSE
    *   Returns the newly created comment object on success.  Otherwise FALSE
    */
   public function save($values) {
@@ -221,11 +224,9 @@ class PES_Wordpress_Model_Comment extends PES_Wordpress_Model {
     $this->sth_comment_save->bindParam(':date_gmt', gmdate('Y-m-d H:i:s', $values['date']->format('U')));
     $this->sth_comment_save->bindParam(':content', $values['comment']);
     $this->sth_comment_save->bindParam(':approved', $is_approved);
-    
+
     if ( ! $this->sth_comment_save->execute()) {
 
-      var_dump($this->sth_comment_save->errorInfo());
-      exit;
       return FALSE;
     }
     else {

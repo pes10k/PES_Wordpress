@@ -1,6 +1,8 @@
 <?php
 
-class PES_Wordpress_Result_Comment extends PES_Wordpress_Result {
+namespace PES\Wordpress\Result;
+
+class Comment extends \PES\Wordpress\Result {
 
   /**
    * Returns the uniquely identifying id for a comment
@@ -15,7 +17,7 @@ class PES_Wordpress_Result_Comment extends PES_Wordpress_Result {
    * Returns an object representing the post that this comment belongs to,
    * if one exists
    *
-   * @return PES_Wordpress_Result_Post|FALSE
+   * @return \PES\Wordpress\Result\Post|FALSE
    */
   public function post() {
     $post_id = $this->property('comment_post_ID');
