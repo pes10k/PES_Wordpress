@@ -8,20 +8,50 @@ class Post extends \PES\Wordpress\Model {
   /**
    * A prepared statement for fetching a post by its post id.
    * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   *
+   * @var \PDOStatement
    */
   private $sth_post_with_id = FALSE;
 
   /**
    * A prepared statement for fetching a post by its title, status and type.
    * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   *
+   * @var \PDOStatement
    */
   private $sth_post_with_title_status_and_type = FALSE;
 
   /**
+   * A lazy-loaded, prepared statement for fetching a post by its title and
+   * status.
+   *
+   * @var \PDOStatement
+   */
+  private $sth_post_with_title_and_status = FALSE;
+
+  /**
    * A prepared statement for saving a new post to the database.
    * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   *
+   * @var \PDOStatement
    */
   private $sth_save_post = FALSE;
+
+  /**
+   * A prepared statement to delete a post from the database.  This is
+   * lazy-loaded.
+   *
+   * @var \PDOStatement
+   */
+  private $sth_delete_post = FALSE;
+
+  /**
+   * A prepared statement to fetch all posts from the database.  This is
+   * lazy-loaded.
+   *
+   * @var \PDOStatement
+   */
+  private $sth_all_post = FALSE;
 
   /**
    * Returns the post with the given post id, if one exists.
@@ -57,6 +87,56 @@ class Post extends \PES\Wordpress\Model {
 
     $row = $this->sth_post_with_id->fetchObject();
     return $row ? new Result\Post($this->wp(), $row) : FALSE;
+  }
+
+  /**
+   * Searches to see if there are any posts in the database with the given
+   * title and status.
+   *
+   * @param string $title
+   *   The possible title of a wordpress post
+   * @param string $status
+   *   The type of wordpress post status to search by, such as 'publish'
+   *   or 'draft'
+   *
+   * @return array
+   *   Returns an array of zero or more \PES\Wordpress\Result\Post objects,
+   *   ordered by least to most recent.
+   */
+  public function postsWithTitleAndStatus($title, $status) {
+
+    if ( ! $this->sth_post_with_title_and_status) {
+
+      $connector = $this->connector();
+      $db = $connector->db();
+
+      $title_status_query = '
+        SELECT
+          p.*
+        FROM
+          ' . $connector->prefixedTable('posts') . ' AS p
+        WHERE
+          p.post_title = :title AND
+          p.post_status = :status
+        ORDER BY
+          p.post_date
+      ';
+
+      $this->sth_post_with_title_and_status = $db->prepare($title_status_query);
+    }
+
+    $this->sth_post_with_title_and_status->bindParam(':title', $title);
+    $this->sth_post_with_title_and_status->bindParam(':status', $status);
+    $this->sth_post_with_title_and_status->execute();
+
+    $posts = array();
+
+    while ($row = $this->sth_post_with_title_and_status->fetchObject()) {
+
+      $posts[] = new Result\Post($this->wp(), $row);
+    }
+
+    return $posts;
   }
 
   /**
@@ -235,6 +315,86 @@ class Post extends \PES\Wordpress\Model {
           WHERE
             c.`comment_post_ID` = p.`ID`
         )
-      ');
+    ');
+  }
+
+  public function all() {
+
+    if ( ! $this->sth_all_post) {
+
+      $connector = $this->connector();
+      $db = $connector->db();
+
+      $fetch_all_query = '
+        SELECT
+          *
+        FROM
+          ' . $connector->prefixedTable('posts') . '
+        ORDER BY
+          post_modified_gmt ASC';
+
+      $this->sth_all_post = $db->prepare($fetch_all_query);
+    }
+
+    $posts = array();
+
+    $this->sth_all_post->execute();
+
+    while ($row = $this->sth_all_post->fetchObject()) {
+      $posts[] = new Result\Post($this->wp(), $row);
+    }
+
+    return $posts;
+  }
+
+  /* ********************************* */
+  /* ! Abstract Model implementations  */
+  /* ********************************* */
+
+  /**
+   * Returns the post with the given post ID, if one exists.
+   *
+   * @param int $id
+   *   A value that uniquely identifies a post
+   *
+   * @return \PES\Wordpress\Result|FALSE
+   *   An instance \PES\Wordpress\Result\Post that matches the given
+   *   identifier, if one exists.  Otherwise, FALSE
+   */
+  public function get($id) {
+    return $this->postWithId($id);
+  }
+
+  /**
+   * Deletes a post from the database with the given post id.
+   *
+   * @param int $id
+   *   The id of a post to remove
+   *
+   * @return bool
+   *   Returns TRUE if any changes were made to the database.  Otherwise,
+   *   FALSE.
+   */
+  public function delete($id) {
+
+    if ( ! $this->sth_delete_post) {
+
+      $connector = $this->connector();
+      $db = $connector->db();
+
+      $delete_post_query = '
+        DELETE FROM
+          ' . $connector->prefixedTable('posts') . '
+        WHERE
+          ID = :post_id
+        LIMIT
+          1
+      ';
+
+      $this->sth_delete_post = $db->prepare($delete_post_query);
+    }
+
+    $this->sth_delete_post->bindParam(':post_id', $id);
+    return $this->sth_delete_post->execute();
   }
 }

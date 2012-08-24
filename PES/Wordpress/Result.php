@@ -14,7 +14,7 @@ abstract class Result {
   /**
    * Stores an object representing a row from the wordpress database
    *
-   * @var stdClass
+   * @var \stdClass
    */
   private $row;
 
@@ -30,6 +30,15 @@ abstract class Result {
   public function __construct(\PES\Wordpress $wp, $row = FALSE) {
     $this->wp = $wp;
     $this->row = $row ?: new \stdClass();
+  }
+
+  /**
+   * Returns the underlying database row, returned from the PDO statement
+   *
+   * @return \stdClass
+   */
+  public function row() {
+    return $this->row;
   }
 
   /**

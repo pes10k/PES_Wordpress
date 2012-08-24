@@ -22,6 +22,32 @@ abstract class Model {
   }
 
   /**
+   * Subclasses must implement this method to return a single Result object
+   * that matches the given unique identifier, if one exists.
+   *
+   * @param mixed $id
+   *   A value that uniquely identifies a record
+   *
+   * @return \PES\Wordpress\Result|FALSE
+   *   Returns a subclass of \PES\Wordpress\Result that matches the given
+   *   identifier, if one exists.  Otherwise, FALSE
+   */
+  abstract public function get($id);
+
+  /**
+   * Subclasses must implement this method to remove a single
+   * record from their table(s) that match the given, unique identifier
+   *
+   * @param mixed $id
+   *   A value that uniquely identifies a record
+   *
+   * @return bool
+   *   Returns TRUE if any changes were made to the database.  Otherwise,
+   *   FALSE.
+   */
+  abstract public function delete($id);
+
+  /**
    * Saves a new record to the database.  Inheriting models implement this to
    * handle managing and validating fields for the table(s) they manage.
    *

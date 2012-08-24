@@ -133,4 +133,28 @@ class User extends \PES\Wordpress\Model {
     $row = $this->sth_user_with_display_name->fetchObject();
     return $row ? new Result\User($this->wp(), $row) : FALSE;
   }
+
+  /* ********************************* */
+  /* ! Abstract Model implementations  */
+  /* ********************************* */
+
+  /**
+   * Returns a populated user result object, with the user id matching the given
+   * unique id.
+   *
+   * @param int $id
+   *   The unique id of a user
+   *
+   * @return \PES\Wordpress\Result\User|FALSE
+   *   Either a populated user result object, if there is a user in the system
+   *   that matches the given unique id.  Otherwise, FALSE.
+   */
+  public function get($id) {
+    return $this->userWithId($id);
+  }
+
+  /**
+   * @todo Implement user delete method
+   */
+  public function delete($id) {}
 }

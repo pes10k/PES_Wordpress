@@ -259,6 +259,32 @@ class Taxonomy extends \PES\Wordpress\Model {
           WHERE
             tr.`term_taxonomy_id` = tt.`term_taxonomy_id`
         )
-      ');
+    ');
   }
+
+  /* ********************************* */
+  /* ! Abstract Model implementations  */
+  /* ********************************* */
+
+  /**
+   * Returns a taxonomy "tag" with the given unique identifier
+   * Note that this only returns "post_tags" and not other taxonomy term
+   * types.  If you want to fetch other taxonomy terms type, use the
+   * underlying termWithId() method
+   *
+   * @param int $id
+   *   The unique identifier for a taxonomy term of type "tag"
+   *
+   * @return \PES\Wordpress\Result\Taxonomy|FALSE
+   *   Returns a populated taxonomy term object if a taxonomy term of type
+   *   "post_tag" could be found.  Otherwise, FALSE
+   */
+  public function get($id) {
+    return $this->termWithId($id);
+  }
+
+  /**
+   * @todo Implement this functionality!
+   */
+  public function delete($id) {}
 }

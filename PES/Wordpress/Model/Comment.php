@@ -8,12 +8,16 @@ class Comment extends \PES\Wordpress\Model {
   /**
    * A prepared statement for fetching a comment by its id.
    * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   *
+   * @var \PDOStatement|FALSE
    */
   private $sth_comment_with_id = FALSE;
 
   /**
    * A prepared statement for fetching all comments associated with a post.
    * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   *
+   * @var \PDOStatement|FALSE
    */
   private $sth_comments_for_post_id = FALSE;
 
@@ -22,14 +26,26 @@ class Comment extends \PES\Wordpress\Model {
    * Useful when trying to see if a comment exists, but you don't have its unique
    * id.  This is lazy loaded, so it starts as FALSE and only is created when
    * needed.
+   *
+   * @var \PDOStatement|FALSE
    */
   private $sth_comment_by_author_for_post_and_date = FALSE;
 
   /**
    * A prepared statement for saving a new comment into the database.
    * This is lazy loaded, so it starts as FALSE and only is created when needed.
+   *
+   * @var \PDOStatement|FALSE
    */
   private $sth_comment_save = FALSE;
+
+  /**
+   * A lazy loaded prepared statement for deleting a single comment, identified
+   * by comment id.
+   *
+   * @var \PDOStatement|FALSE
+   */
+  private $sth_comment_delete = FALSE;
 
   /**
    * Returns the comment with the given comment id, if one exists.
@@ -233,5 +249,57 @@ class Comment extends \PES\Wordpress\Model {
 
       return $this->commentWithId($this->connector()->db()->lastInsertId());
     }
+  }
+
+  /* ********************************* */
+  /* ! Abstract Model implementations  */
+  /* ********************************* */
+
+  /**
+   * Returns a single comment record, as identified by the give comment id,
+   * if one exists
+   *
+   * @param int $id
+   *   The unique id for a comment
+   *
+   * @return \PES\Wordpress\Result\Comment|FALSE
+   *   Returns a result object if a comment matches the given identifier.
+   *   Otherwise, FALSE.
+   */
+  public function get($id) {
+    return $this->commentWithId($id);
+  }
+
+  /**
+   * Deletes a comment from the database with the given unique identifier
+   *
+   * @param int $id
+   *   The id of a comment to remove
+   *
+   * @return bool
+   *   Returns TRUE if any changes were made to the database.  Otherwise,
+   *   FALSE.
+   */
+  public function delete($id) {
+
+    if ( ! $this->sth_comment_delete) {
+
+      $connector = $this->connector();
+      $db = $connector->db();
+
+      $delete_query = '
+        DELETE FROM
+          ' . $connector->prefixedTable('comments') . '
+        WHERE
+          comment_ID = :comment_id
+        LIMIT
+          1
+      ';
+
+      $this->sth_comment_delete = $db->prepare($delete_query);
+    }
+
+    $this->sth_comment_delete->bindParam(':comment_id', $id);
+    return $this->sth_comment_delete->execute();
   }
 }
