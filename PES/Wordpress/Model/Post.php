@@ -98,12 +98,14 @@ class Post extends \PES\Wordpress\Model {
    * @param string $status
    *   The type of wordpress post status to search by, such as 'publish'
    *   or 'draft'
+   * @param string date
+   *   The date a post was created on
    *
    * @return array
    *   Returns an array of zero or more \PES\Wordpress\Result\Post objects,
    *   ordered by least to most recent.
    */
-  public function postsWithTitleAndStatus($title, $status) {
+  public function postsWithTitleStatusAndDate($title, $status, $date) {
 
     if ( ! $this->sth_post_with_title_and_status) {
 
@@ -117,7 +119,8 @@ class Post extends \PES\Wordpress\Model {
           ' . $connector->prefixedTable('posts') . ' AS p
         WHERE
           p.post_title = :title AND
-          p.post_status = :status
+          p.post_status = :status AND
+          p.post_date = :date
         ORDER BY
           p.post_date
       ';
@@ -127,6 +130,7 @@ class Post extends \PES\Wordpress\Model {
 
     $this->sth_post_with_title_and_status->bindParam(':title', $title);
     $this->sth_post_with_title_and_status->bindParam(':status', $status);
+    $this->sth_post_with_title_and_status->bindParam(':date', $date);
     $this->sth_post_with_title_and_status->execute();
 
     $posts = array();
@@ -331,7 +335,7 @@ class Post extends \PES\Wordpress\Model {
         FROM
           ' . $connector->prefixedTable('posts') . '
         ORDER BY
-          post_modified_gmt ASC';
+          id ASC';
 
       $this->sth_all_post = $db->prepare($fetch_all_query);
     }

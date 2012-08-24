@@ -62,7 +62,7 @@ abstract class Result {
    *   Returns the value of the requested property if it exists, or otherwise
    *   FALSE
    */
-  protected function property($name) {
+  public function property($name) {
     return isset($this->row->$name) ? trim($this->row->$name) : FALSE;
   }
 }
